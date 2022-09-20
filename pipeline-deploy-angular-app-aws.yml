@@ -1,0 +1,24 @@
+node {
+    def git_source_url='https://github.com/hanmantguddapure/Finance_App_UI.git'
+    def git_souce_branch='Version-Changes'
+    def git_credentials='gitcredentials'
+    def bucket_nam='www.test.loanapp';
+    def DIST_ARCHIVE = "dist"
+    stage('Project Checkout') { 
+        git branch: 'Version-Changes', credentialsId: 'gitcredentials', url: 'https://github.com/hanmantguddapure/Finance_App_UI.git'
+    }
+    stage('NPM Install') {
+        bat 'npm install -f'
+    }
+    stage('Build') {
+       bat 'npm run build'
+    }
+   
+    stage('Deploy on s3') {
+          withCredentials([[$class:"AmazonWebServicesCredentialsBinding",credentialsId:'awscredentials']]) {
+              bat "aws s3 sync ./dist/app s3://${bucket_nam}/ --acl=public-read --delete"
+              //bat "aws s3 cp dist s3://${bucket_nam}"
+        }
+        
+    }
+}
