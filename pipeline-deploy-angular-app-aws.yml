@@ -13,12 +13,10 @@ node {
     stage('Build') {
        bat 'npm run build'
     }
-   
     stage('Deploy on s3') {
-          withCredentials([[$class:"AmazonWebServicesCredentialsBinding",credentialsId:'awscredentials']]) {
-              bat "aws s3 sync ./dist/app s3://${bucket_nam}/ --acl=public-read --delete"
-              //bat "aws s3 cp dist s3://${bucket_nam}"
+         withCredentials([[$class:"AmazonWebServicesCredentialsBinding",credentialsId:'awscredentials']]) {
+            bat "aws s3 sync ./dist/app s3://${bucket_nam}/ --acl=public-read --delete"
+            //bat "aws s3 cp dist s3://${bucket_nam}"
         }
-        
     }
 }
